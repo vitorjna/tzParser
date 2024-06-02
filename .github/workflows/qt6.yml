@@ -1,0 +1,47 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+        run:
+            shell: msys2 {0}
+
+    steps:
+      - uses: msys2/setup-msys2@v2
+        with:
+            install: mingw-w64-x64-toolchain
+            msystem: mingw64
+            release: false
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: '6.7.0'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_mingw1120'
+          dir: '${{github.workspace}}/qt/'
+          install-deps: 'true'
+
+      - name: List files in Qt
+        run: find ${{env.Qt6_Dir}}
+
+      - uses: actions/checkout@v2
+
+      - name: Configure CMake
+        env:
+          CMAKE_PREFIX_PATH: ${{env.Qt6_Dir}}
+        run: cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PREFIX_PATH="${{env.Qt6_Dir}}/lib/cmake/" -DQt6_DIR=${{env.Qt6_Dir}}/lib/cmake/Qt6/ -G "Ninja" -B '${{github.workspace}}'/build
+
+      - name: Build
+        run: cmake --build '${{github.workspace}}'/build --target RePr
