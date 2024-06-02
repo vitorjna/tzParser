@@ -3,8 +3,12 @@ name: Build
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - src/**
   pull_request:
     branches: [ "main" ]
+    paths:
+      - src/**
 
 env:
   BUILD_TYPE: Release
@@ -33,6 +37,7 @@ jobs:
           target: 'desktop'
           arch: 'win64_mingw'
           archives: 'qttools qtbase MinGW'
+          tools: 'tools_cmake tools_ninja'
           dir: '${{github.workspace}}/qt/'
           install-deps: 'true'
 
