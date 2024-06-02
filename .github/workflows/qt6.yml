@@ -23,13 +23,16 @@ jobs:
             msystem: mingw64
             release: false
 
+      # https://ddalcino.github.io/aqt-list-server/
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v3
         with:
-          version: '6.7.0'
+          aqtversion: '==3.1.*'
+          version: '6.7.1'
           host: 'windows'
           target: 'desktop'
           arch: 'win64_mingw'
+          archives: 'qttools qtbase MinGW'
           dir: '${{github.workspace}}/qt/'
           install-deps: 'true'
 
