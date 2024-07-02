@@ -7,7 +7,7 @@
 #include "qlist.h"
 #include "qwidget.h"
 
-MainWindow::MainWindow(const QList<TableRow> &myRows, QWidget *parent)
+MainWindow::MainWindow(const QList<TimeZone> &myRows, QWidget *parent)
     : QWidget(parent)
     , myRows(myRows)
 {
@@ -16,7 +16,7 @@ MainWindow::MainWindow(const QList<TableRow> &myRows, QWidget *parent)
     setupUi();
 
     this->show();
-    myTextEdit->setPlainText(TableRow::rowsListToTableAscii(myRows));
+    myTextEdit->setPlainText(TimeZone::rowsListToTableAscii(myRows));
 }
 
 void MainWindow::setupUi()
@@ -68,8 +68,8 @@ void MainWindow::setupUi()
             QStringList szaSearchText;
             szaSearchText.reserve(myRows.size());
 
-            for (const TableRow &myRow : myRows) {
-                szaSearchText.append(myRow.country + " - " + myRow.zoneID);
+            for (const TimeZone &myRow : myRows) {
+                szaSearchText.append(myRow.data[TimeZone::COUNTRY] + " - " + myRow.data[TimeZone::ZONE_NAME]);
             }
 
             QCompleter *completerTimezones = new QCompleter(szaSearchText, this);
@@ -81,13 +81,13 @@ void MainWindow::setupUi()
     }
     myMainLayout->addLayout(mySearchLayout);
 
-    this->resize(1000, 800);
+    this->resize(1200, 800);
     this->setLayout(myMainLayout);
 }
 
 void MainWindow::searchTextChanged(const QString &szText)
 {
-    QList<TableRow> myRowsFilteredBase;
+    QList<TimeZone> myRowsFilteredBase;
     const QString szTextLower = szText.toLower();
 
     if (szSearchText.isEmpty() == false
@@ -102,15 +102,18 @@ void MainWindow::searchTextChanged(const QString &szText)
     this->szSearchText = szTextLower;
     myRowsFiltered.clear();
 
-    for (const TableRow &myRow : myRowsFilteredBase) {
-        if (myRow.country.contains(this->szSearchText, Qt::CaseInsensitive)
-            || myRow.zoneID.contains(this->szSearchText, Qt::CaseInsensitive)) {
+    for (const TimeZone &myRow : myRowsFilteredBase) {
+        if (myRow.data[TimeZone::COUNTRY].contains(this->szSearchText, Qt::CaseInsensitive)
+            || myRow.data[TimeZone::ZONE_NAME].contains(this->szSearchText, Qt::CaseInsensitive)
+            || myRow.data[TimeZone::ZONE_NAME_DST].contains(this->szSearchText, Qt::CaseInsensitive)
+            || myRow.data[TimeZone::ZONE_NET_NAME].contains(this->szSearchText, Qt::CaseInsensitive)
+           ) {
 
             myRowsFiltered.append(myRow);
         }
     }
 
-    const QString szHtml = TableRow::rowsListToTableAscii(myRowsFiltered);
+    const QString szHtml = TimeZone::rowsListToTableAscii(myRowsFiltered);
     myTextEdit->clear();
     myTextEdit->setPlainText(szHtml);
 }

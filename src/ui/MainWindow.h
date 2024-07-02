@@ -7,14 +7,14 @@
 #include "qtextedit.h"
 #include "qwidget.h"
 
-#include "TableRow.h"
+#include "TimeZone.h"
 
 class MainWindow : public QWidget
 {
     Q_OBJECT
 
 public:
-    MainWindow(const QList<TableRow> &myRows, QWidget *parent = nullptr);
+    MainWindow(const QList<TimeZone> &myRows, QWidget *parent = nullptr);
 
 protected:
     void setupUi();
@@ -23,8 +23,8 @@ private:
     void searchTextChanged(const QString &szText);
 
     QTextEdit *myTextEdit = {};
-    QList<TableRow> myRows;
-    QList<TableRow> myRowsFiltered;
+    QList<TimeZone> myRows;
+    QList<TimeZone> myRowsFiltered;
 
     QString szSearchText;
 };
